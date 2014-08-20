@@ -59,87 +59,89 @@
 #
 ################################################################################
 
-class AastraIPPhoneTextMenu < AastraIPPhone
-  @defaultIndex
-  @style
-  @wraplist
-  @maxitems
+module AastraXmlApi
+  class AastraIPPhoneTextMenu < AastraIPPhone
+    @defaultIndex
+    @style
+    @wraplist
+    @maxitems
 
-  # Sets the default index to highlight when first shown.
-  def setDefaultIndex(defaultIndex)
-    @defaultIndex = defaultIndex
-  end
-
-  # Set the style to one of numbered (default), none, or radio.
-  def setStyle(style)
-    @style = style
-  end
-
-  # Add a menu entry with name displayed and calls url when selected.  The
-  # selection option is the value appended to a custom softkey URL when
-  # this item is highlighted. icon is a reference to an included icon
-  # that is shown with the menu entry.  dial is what is called when
-  # the user hits a softkey with the URI "SoftKey:Dial2".
-  def addEntry(name, url, selection=nil, icon=nil, dial=nil)
-    @entries += [AastraIPPhoneTextMenuEntry.new(name, url, selection, icon, dial)]
-  end
-
-  # Allows entries in the list to wrap.
-  def setWrapList
-    @wraplist = "yes"
-  end
-
-  # Use natural order sorting to sort the menu by name.
-  def natsortByName
-    tmparray = []
-    linklist = {}
-    for i in 0..@entries.size-1
-      tmparray += [@entries[i].getName]
-      linklist[@entries[i].getName] = i
+    # Sets the default index to highlight when first shown.
+    def setDefaultIndex(defaultIndex)
+      @defaultIndex = defaultIndex
     end
-    tmparray.natsort!
-    newentries = []
-    tmparray.each do |name|
-      newentries += [@entries[linklist[name]]]
-    end
-    @entries = newentries
-  end
 
-  # Create XML text output.
-  def render
-    @maxitems = 30 if @maxitems.nil?
-    xml = "<AastraIPPhoneTextMenu"
-    xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
-    xml += " defaultIndex=\"#{@defaultIndex}\"" if not @defaultIndex.nil?
-    xml += " style=\"#{@style}\"" if not @style.nil?
-    xml += " Beep=\"yes\"" if @beep == "yes"
-    xml += " LockIn=\"yes\"" if @lockin == "yes"
-    xml += " wrapList=\"yes\"" if @wraplist == "yes"
-    xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
-    xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    xml += ">\n"
-    if not @title.nil? then
-      xml += "<Title"
-      xml += " wrap=\"yes\"" if @title_wrap == "yes"
-      xml += ">#{escape(@title)}</Title>\n"
+    # Set the style to one of numbered (default), none, or radio.
+    def setStyle(style)
+      @style = style
     end
-    index = 0
-    @entries.each do |entry|
-      xml += entry.render if index < @maxitems
-      index += 1
+
+    # Add a menu entry with name displayed and calls url when selected.  The
+    # selection option is the value appended to a custom softkey URL when
+    # this item is highlighted. icon is a reference to an included icon
+    # that is shown with the menu entry.  dial is what is called when
+    # the user hits a softkey with the URI "SoftKey:Dial2".
+    def addEntry(name, url, selection=nil, icon=nil, dial=nil)
+      @entries += [AastraIPPhoneTextMenuEntry.new(name, url, selection, icon, dial)]
     end
-    @softkeys.each { |softkey| xml += softkey.render }
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0 then
-        xml += "<IconList>\n"
-        iconList = 1
+
+    # Allows entries in the list to wrap.
+    def setWrapList
+      @wraplist = "yes"
+    end
+
+    # Use natural order sorting to sort the menu by name.
+    def natsortByName
+      tmparray = []
+      linklist = {}
+      for i in 0..@entries.size-1
+        tmparray += [@entries[i].getName]
+        linklist[@entries[i].getName] = i
       end
-      xml += icon.render
+      tmparray.natsort!
+      newentries = []
+      tmparray.each do |name|
+        newentries += [@entries[linklist[name]]]
+      end
+      @entries = newentries
     end
-    xml += "</IconList>\n" if iconList != 0
-    xml += "</AastraIPPhoneTextMenu>\n"
-    return xml
+
+    # Create XML text output.
+    def render
+      @maxitems = 30 if @maxitems.nil?
+      xml = "<AastraIPPhoneTextMenu"
+      xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
+      xml += " defaultIndex=\"#{@defaultIndex}\"" if not @defaultIndex.nil?
+      xml += " style=\"#{@style}\"" if not @style.nil?
+      xml += " Beep=\"yes\"" if @beep == "yes"
+      xml += " LockIn=\"yes\"" if @lockin == "yes"
+      xml += " wrapList=\"yes\"" if @wraplist == "yes"
+      xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
+      xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      xml += ">\n"
+      if not @title.nil? then
+        xml += "<Title"
+        xml += " wrap=\"yes\"" if @title_wrap == "yes"
+        xml += ">#{escape(@title)}</Title>\n"
+      end
+      index = 0
+      @entries.each do |entry|
+        xml += entry.render if index < @maxitems
+        index += 1
+      end
+      @softkeys.each { |softkey| xml += softkey.render }
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0 then
+          xml += "<IconList>\n"
+          iconList = 1
+        end
+        xml += icon.render
+      end
+      xml += "</IconList>\n" if iconList != 0
+      xml += "</AastraIPPhoneTextMenu>\n"
+      return xml
+    end
   end
-  end
+end

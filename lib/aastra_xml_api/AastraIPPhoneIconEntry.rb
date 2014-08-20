@@ -8,20 +8,22 @@
 # Internal class for AastraIPPhone object.
 ################################################################################
 
-class AastraIPPhoneIconEntry
-  @index
-  @icon
+module AastraXmlApi
+  class AastraIPPhoneIconEntry
+    @index
+    @icon
 
-  # Create new icon entry available to be referenced as index.  The icon
-  # can either be a predefined icon (i.e. Icon:PhoneOnHook) or the actual
-  # hex data (as a string) of the icon.
-  def initialize(index, icon)
-    @index = index
-    @icon = icon
-  end
+    # Create new icon entry available to be referenced as index.  The icon
+    # can either be a predefined icon (i.e. Icon:PhoneOnHook) or the actual
+    # hex data (as a string) of the icon.
+    def initialize(index, icon)
+      @index = index
+      @icon = icon
+    end
 
-  # Create XML text output for this entry.
-  def render
-    return "<Icon index=\"#{@index}\">#{@icon}</Icon>\n"
+    # Create XML text output for this entry.
+    def render
+      return "<Icon index=\"#{@index}\">#{@icon}</Icon>\n"
+    end
   end
 end

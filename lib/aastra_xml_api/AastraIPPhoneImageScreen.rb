@@ -51,89 +51,91 @@
 #
 ################################################################################
 
-class AastraIPPhoneImageScreen < AastraIPPhone
-  @image
-  @verticalAlign
-  @horizontalAlign
-  @height
-  @width
-  @allowDTMF
+module AastraXmlApi
+  class AastraIPPhoneImageScreen < AastraIPPhone
+    @image
+    @verticalAlign
+    @horizontalAlign
+    @height
+    @width
+    @allowDTMF
 
-  # Set the image as a string of hex characters.
-  def setImage(image)
-    @image = image
-  end
+    # Set the image as a string of hex characters.
+    def setImage(image)
+      @image = image
+    end
 
-  # Set the alignment of the image.  vertical is one of 'top',
-  # 'middle' (default), or 'bottom'.  horizontal is one of 'left',
-  # 'middle' (default), or 'right'.
-  def setAlignment(vertical=nil, horizontal=nil)
-    @verticalAlign = vertical
-    @horizontalAlign = horizontal
-  end
+    # Set the alignment of the image.  vertical is one of 'top',
+    # 'middle' (default), or 'bottom'.  horizontal is one of 'left',
+    # 'middle' (default), or 'right'.
+    def setAlignment(vertical=nil, horizontal=nil)
+      @verticalAlign = vertical
+      @horizontalAlign = horizontal
+    end
 
-  # Sets the size of the image.  Must match the actual image size.
-  def setSize(height, width)
-    @height = height
-    @width = width
-  end
+    # Sets the size of the image.  Must match the actual image size.
+    def setSize(height, width)
+      @height = height
+      @width = width
+    end
 
-  # Sets the image using an externally generated GD image.  This should be
-  # done with an AastraIPPhoneGDImage.
-  def setGDImage(gdImage)
-    img = gdImage.getGDImage
-    byte = 0
-    i = 0
-    imageHexString = ""
-    for x in 0..143
-      for y in 0..39
-        rgb = img.getPixel(x, y)
-        byte += 2**(7-(i%8)) if rgb > 0
-        if (i%8) == 7 then
-          byteHex ="%02x" % byte
-          imageHexString += byteHex
-          byte = 0
+    # Sets the image using an externally generated GD image.  This should be
+    # done with an AastraIPPhoneGDImage.
+    def setGDImage(gdImage)
+      img = gdImage.getGDImage
+      byte = 0
+      i = 0
+      imageHexString = ""
+      for x in 0..143
+        for y in 0..39
+          rgb = img.getPixel(x, y)
+          byte += 2**(7-(i%8)) if rgb > 0
+          if (i%8) == 7 then
+            byteHex ="%02x" % byte
+            imageHexString += byteHex
+            byte = 0
+          end
+          i += 1
         end
-        i += 1
       end
+      setImage(imageHexString)
+      setSize(40,144)
     end
-    setImage(imageHexString)
-    setSize(40,144)
-  end
 
-  # When set, allows the user's pressed keys to be sent as DTMF through
-  # the phone when the phone is in an active call.
-  def setAllowDTMF
-    @allowDTMF = "yes"
-  end
+    # When set, allows the user's pressed keys to be sent as DTMF through
+    # the phone when the phone is in an active call.
+    def setAllowDTMF
+      @allowDTMF = "yes"
+    end
 
-  # Creates XML text output.
-  def render
-    out = "<AastraIPPhoneImageScreen"
-    out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    out += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
-    out += " Beep=\"yes\"" if @beep == "yes"
-    out += " LockIn=\"yes\"" if @locking == "yes"
-    out += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    out += " allowDTMF=\"yes\"" if @allowDTMF == "yes"
-    out += ">\n"
-    out += "<Image"
-    out += " verticalAlign=\"#{@verticalAlign}\"" if not @verticalAlign.nil?
-    out += " horizontalAlign=\"#{@horizontalAlign}\"" if not @horizontalAlign.nil?
-    out += " height=\"#{@height}\"" if not @height.nil?
-    out += " width=\"#{@width}\"" if not @width.nil?
-    out += ">#{@image}</Image>\n"
-    @softkeys.each { |softkey| out += softkey.render }
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0 then
-        out += "<IconList>\n"
-        iconList = 1
+    # Creates XML text output.
+    def render
+      out = "<AastraIPPhoneImageScreen"
+      out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      out += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
+      out += " Beep=\"yes\"" if @beep == "yes"
+      out += " LockIn=\"yes\"" if @locking == "yes"
+      out += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      out += " allowDTMF=\"yes\"" if @allowDTMF == "yes"
+      out += ">\n"
+      out += "<Image"
+      out += " verticalAlign=\"#{@verticalAlign}\"" if not @verticalAlign.nil?
+      out += " horizontalAlign=\"#{@horizontalAlign}\"" if not @horizontalAlign.nil?
+      out += " height=\"#{@height}\"" if not @height.nil?
+      out += " width=\"#{@width}\"" if not @width.nil?
+      out += ">#{@image}</Image>\n"
+      @softkeys.each { |softkey| out += softkey.render }
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0 then
+          out += "<IconList>\n"
+          iconList = 1
+        end
+        out += icon.render
       end
-      out += icon.render
+      out += "</IconList>\n" if iconList != 0
+      out += "</AastraIPPhoneImageScreen>\n"
+      return out
     end
-    out += "</IconList>\n" if iconList != 0
-    out += "</AastraIPPhoneImageScreen>\n"
-    return out
   end
-  end
+end

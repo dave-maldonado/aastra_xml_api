@@ -8,23 +8,25 @@
 # Internal class for AastraIPPhoneExecute object.
 ################################################################################
 
-class AastraIPPhoneExecuteEntry < AastraIPPhone
-  @url
-  @interruptCall
+module AastraXmlApi
+  class AastraIPPhoneExecuteEntry < AastraIPPhone
+    @url
+    @interruptCall
 
-  # Create a new action to be performed.  if interruptCall is not nil then
-  # a currently active call can be interrupted by this action.
-  def initialize(url, interruptCall)
-    @url = url
-    @interruptCall = interruptCall
-  end
+    # Create a new action to be performed.  if interruptCall is not nil then
+    # a currently active call can be interrupted by this action.
+    def initialize(url, interruptCall)
+      @url = url
+      @interruptCall = interruptCall
+    end
 
-  # Create XML text output for this entry.
-  def render
-    url = escape(@url)
-    xml = "<ExecuteItem URI=\"#{url}\""
-    xml += " interruptCall=\"no\"" if @interruptCall == "no"
-    xml += "/>\n"
-    return xml
+    # Create XML text output for this entry.
+    def render
+      url = escape(@url)
+      xml = "<ExecuteItem URI=\"#{url}\""
+      xml += " interruptCall=\"no\"" if @interruptCall == "no"
+      xml += "/>\n"
+      return xml
+    end
   end
 end

@@ -6,27 +6,28 @@
 #
 # Internal class for AastraIPPhoneDirectory object.
 ########################################################################################################
-
-class AastraIPPhoneDirectoryEntry < AastraIPPhone
-  @name
-  @telephone
-
-  # Create new name and number entry.  Overrides the initialize method
-  # of AastraIPPhone.
-  def initialize(name, telephone)
-    @name = name
-    @telephone = telephone
-  end
-
-  # Get the name associated with this entry.
-  def getName
+module AastraXmlApi
+  class AastraIPPhoneDirectoryEntry < AastraIPPhone
     @name
-  end
+    @telephone
 
-  # Create XML text output for this entry.
-  def render
-    name = escape(@name)
-    telephone = escape(@telephone)
-    return "<MenuItem>\n<Prompt>#{name}</Prompt>\n<URI>#{telephone}</URI>\n</MenuItem>\n"
+    # Create new name and number entry.  Overrides the initialize method
+    # of AastraIPPhone.
+    def initialize(name, telephone)
+      @name = name
+      @telephone = telephone
+    end
+
+    # Get the name associated with this entry.
+    def getName
+      @name
+    end
+
+    # Create XML text output for this entry.
+    def render
+      name = escape(@name)
+      telephone = escape(@telephone)
+      return "<MenuItem>\n<Prompt>#{name}</Prompt>\n<URI>#{telephone}</URI>\n</MenuItem>\n"
+    end
   end
 end

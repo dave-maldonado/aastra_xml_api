@@ -40,104 +40,106 @@
 #
 ################################################################################
 
-class AastraIPPhoneImageMenu < AastraIPPhone
-  @image
-  @verticalAlign
-  @horizontalAlign
-  @height
-  @width
-  @uriBase
+module AastraXmlApi
+  class AastraIPPhoneImageMenu < AastraIPPhone
+    @image
+    @verticalAlign
+    @horizontalAlign
+    @height
+    @width
+    @uriBase
 
-  # Sets the image to be displayed.  image must be a string of hex.
-  def setImage(image)
-    @image = image
-  end
+    # Sets the image to be displayed.  image must be a string of hex.
+    def setImage(image)
+      @image = image
+    end
 
-  # Sets the alignment of the image.  veritcal is one of 'top',
-  # 'middle' (default), or 'bottom'.  horizontal is one of 'left',
-  # 'middle' (default), or 'right'.
-  def setAlignment(vertical=nil, horizontal=nil)
-    @verticalAlign = vertical
-    @horizontalAlign = horizontal
-  end
+    # Sets the alignment of the image.  veritcal is one of 'top',
+    # 'middle' (default), or 'bottom'.  horizontal is one of 'left',
+    # 'middle' (default), or 'right'.
+    def setAlignment(vertical=nil, horizontal=nil)
+      @verticalAlign = vertical
+      @horizontalAlign = horizontal
+    end
 
-  # Sets the size of the image to be displayed which must match the
-  # actual images height and width.
-  def setSize(height, width)
-    @height = height
-    @width = width
-  end
+    # Sets the size of the image to be displayed which must match the
+    # actual images height and width.
+    def setSize(height, width)
+      @height = height
+      @width = width
+    end
 
-  # Sets the base URI that is prepended to the URI for a specific key.
-  def setURIBase(uriBase)
-    @uriBase = uriBase
-  end
+    # Sets the base URI that is prepended to the URI for a specific key.
+    def setURIBase(uriBase)
+      @uriBase = uriBase
+    end
 
-  # Adds a URI and key pair that is associated with the given key pressed
-  # by the user.  The full URI is the one set by setURIBase followed
-  # by this uri.
-  def addURI(key, uri)
-    @entries += [AastraIPPhoneImageMenuEntry.new(key, uri)]
-  end
+    # Adds a URI and key pair that is associated with the given key pressed
+    # by the user.  The full URI is the one set by setURIBase followed
+    # by this uri.
+    def addURI(key, uri)
+      @entries += [AastraIPPhoneImageMenuEntry.new(key, uri)]
+    end
 
-  # Sets the image based on an externally generated GD image.  Image must
-  # be 40x144 in size and should be created using AastraIPPhoneGDImage.
-  def setGDImage(gdImage)
-    img = gdImage.getGDImage
-    byte = 0
-    i = 0
-    imageHexString = ""
-    for x in 0..143
-      for y in 0..39
-        rgb = img.getPixel(x, y)
-        byte += 2**(7-(i%8)) if rgb > 0
-        if (i%8) == 7 then
-          byteHex ="%02x" % byte
-          imageHexString += byteHex
-          byte = 0
+    # Sets the image based on an externally generated GD image.  Image must
+    # be 40x144 in size and should be created using AastraIPPhoneGDImage.
+    def setGDImage(gdImage)
+      img = gdImage.getGDImage
+      byte = 0
+      i = 0
+      imageHexString = ""
+      for x in 0..143
+        for y in 0..39
+          rgb = img.getPixel(x, y)
+          byte += 2**(7-(i%8)) if rgb > 0
+          if (i%8) == 7 then
+            byteHex ="%02x" % byte
+            imageHexString += byteHex
+            byte = 0
+          end
+          i += 1
         end
-        i += 1
       end
+      setImage(imageHexString)
+      setSize(40,144)
     end
-    setImage(imageHexString)
-    setSize(40,144)
-  end
 
-  # Create XML text output.
-  def render
-    title = escape(@title)
-    out = "<AastraIPPhoneImageMenu"
-    out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    if not @cancelAction.nil? then
-      cancelAction = escape(@cancelAction)
-      out += " cancelAction=\"#{cancelAction}\""
-    end
-    out += " Beep=\"yes\"" if @beep == "yes"
-    out += " LockIn=\"yes\"" if @locking == "yes"
-    out += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    out += ">\n"
-    out += "<Image"
-    out += " verticalAlign=\"#{@verticalAlign}\"" if not @verticalAlign.nil?
-    out += " horizontalAlign=\"#{@horizontalAlign}\"" if not @horizontalAlign.nil?
-    out += " height=\"#{@height}\"" if not @height.nil?
-    out += " width=\"#{@width}\"" if not @width.nil?
-    out += ">#{@image}</Image>\n"
-    out += "<URIList"
-    out += " base=\"#{escape(@uriBase)}\"" if not @uriBase.nil?
-    out += ">\n"
-    @entries.each { |entry| out += entry.render }
-    out += "</URIList>\n"
-    @softkeys.each { |softkey| out += softkey.render }
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0
-        out += "<IconList>\n"
-        iconList = 1
+    # Create XML text output.
+    def render
+      title = escape(@title)
+      out = "<AastraIPPhoneImageMenu"
+      out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      if not @cancelAction.nil? then
+        cancelAction = escape(@cancelAction)
+        out += " cancelAction=\"#{cancelAction}\""
       end
-      out += icon.render
+      out += " Beep=\"yes\"" if @beep == "yes"
+      out += " LockIn=\"yes\"" if @locking == "yes"
+      out += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      out += ">\n"
+      out += "<Image"
+      out += " verticalAlign=\"#{@verticalAlign}\"" if not @verticalAlign.nil?
+      out += " horizontalAlign=\"#{@horizontalAlign}\"" if not @horizontalAlign.nil?
+      out += " height=\"#{@height}\"" if not @height.nil?
+      out += " width=\"#{@width}\"" if not @width.nil?
+      out += ">#{@image}</Image>\n"
+      out += "<URIList"
+      out += " base=\"#{escape(@uriBase)}\"" if not @uriBase.nil?
+      out += ">\n"
+      @entries.each { |entry| out += entry.render }
+      out += "</URIList>\n"
+      @softkeys.each { |softkey| out += softkey.render }
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0
+          out += "<IconList>\n"
+          iconList = 1
+        end
+        out += icon.render
+      end
+      out += "</IconList>\n" if iconList != 0
+      out += "</AastraIPPhoneImageMenu>\n"
+      return out
     end
-    out += "</IconList>\n" if iconList != 0
-    out += "</AastraIPPhoneImageMenu>\n"
-    return out
   end
 end

@@ -44,74 +44,76 @@
 #
 ################################################################################
 
-class AastraIPPhoneFormattedTextScreen < AastraIPPhone
-  @doneAction
-  @allowDTMF
+module AastraXmlApi
+  class AastraIPPhoneFormattedTextScreen < AastraIPPhone
+    @doneAction
+    @allowDTMF
 
-  # Add a line of formatted text. size can only be 'normal' (default)
-  # or 'double'. align can be one of 'left' (default), 'center',
-  # or 'right'.
-  def addLine(text, size=nil, align=nil)
-    @entries += [AastraIPPhoneFormattedTextScreenEntry.new(text, size, align, 'normal')]
-  end
-
-  # Starts the beginning of a scrolling section on the display. If height
-  # is not given, then all available space is used to display the scrolling
-  # section. Otherwise, height cannot be bigger than 2.
-  def setScrollStart(height=nil)
-    @entries += [AastraIPPhoneFormattedTextScreenEntry.new(nil, height, nil, 'scrollstart')]
-  end
-
-  # Sets the end of a scrolling section on the display.
-  def setScrollEnd
-    @entries += [AastraIPPhoneFormattedTextScreenEntry.new(nil, nil, nil, 'scrollend')]
-  end
-
-  # Defines URI to call when the user selects the 'Done' softkey.
-  def setDoneAction(uri)
-    @doneAction = uri
-  end
-
-  # Allows keypad strokes to generate DTMF when a call is in progress
-  # while this object is displayed.
-  def setAllowDTMF
-    @allowDTMF = "yes"
-  end
-
-  # Create XML text output.
-  def render
-    out = "<AastraIPPhoneFormattedTextScreen"
-    out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    if not @cancelAction.nil? then
-      cancelAction = escape(@cancelAction)
-      out += " cancelAction=\"#{cancelAction}\""
+    # Add a line of formatted text. size can only be 'normal' (default)
+    # or 'double'. align can be one of 'left' (default), 'center',
+    # or 'right'.
+    def addLine(text, size=nil, align=nil)
+      @entries += [AastraIPPhoneFormattedTextScreenEntry.new(text, size, align, 'normal')]
     end
-    if not @doneAction.nil? then
-      doneAction = escape(@doneAction)
-      out += " doneAction=\"#{doneAction}\""
+
+    # Starts the beginning of a scrolling section on the display. If height
+    # is not given, then all available space is used to display the scrolling
+    # section. Otherwise, height cannot be bigger than 2.
+    def setScrollStart(height=nil)
+      @entries += [AastraIPPhoneFormattedTextScreenEntry.new(nil, height, nil, 'scrollstart')]
     end
-    out += " Beep=\"yes\"" if @beep == "yes"
-    out += " LockIn=\"yes\"" if @lockin == "yes"
-    out += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
-    out += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    out += " allowDTMF=\"#{yes}\"" if @allowDTMF == "yes"
-    out += ">\n"
-    @entries.each do |entry|
-      out += entry.render
+
+    # Sets the end of a scrolling section on the display.
+    def setScrollEnd
+      @entries += [AastraIPPhoneFormattedTextScreenEntry.new(nil, nil, nil, 'scrollend')]
     end
-    @softkeys.each do |softkey|
-      out += softkey.render
+
+    # Defines URI to call when the user selects the 'Done' softkey.
+    def setDoneAction(uri)
+      @doneAction = uri
     end
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0 then
-        out += "<IconList>\n"
-        iconList = 1
+
+    # Allows keypad strokes to generate DTMF when a call is in progress
+    # while this object is displayed.
+    def setAllowDTMF
+      @allowDTMF = "yes"
+    end
+
+    # Create XML text output.
+    def render
+      out = "<AastraIPPhoneFormattedTextScreen"
+      out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      if not @cancelAction.nil? then
+        cancelAction = escape(@cancelAction)
+        out += " cancelAction=\"#{cancelAction}\""
       end
-      out += icon.render
+      if not @doneAction.nil? then
+        doneAction = escape(@doneAction)
+        out += " doneAction=\"#{doneAction}\""
+      end
+      out += " Beep=\"yes\"" if @beep == "yes"
+      out += " LockIn=\"yes\"" if @lockin == "yes"
+      out += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
+      out += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      out += " allowDTMF=\"#{yes}\"" if @allowDTMF == "yes"
+      out += ">\n"
+      @entries.each do |entry|
+        out += entry.render
+      end
+      @softkeys.each do |softkey|
+        out += softkey.render
+      end
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0 then
+          out += "<IconList>\n"
+          iconList = 1
+        end
+        out += icon.render
+      end
+      out += "</IconList>\n" if iconList != 0
+      out += "</AastraIPPhoneFormattedTextScreen>\n"
+      return out
     end
-    out += "</IconList>\n" if iconList != 0
-    out += "</AastraIPPhoneFormattedTextScreen>\n"
-    return out
   end
-  end
+end

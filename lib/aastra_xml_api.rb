@@ -5,5 +5,5 @@ require 'cgi'
   require "aastra_xml_api/#{name}"
 end
 
-module AastraXmlApi
-end
+# module AastraXmlApi
+# end

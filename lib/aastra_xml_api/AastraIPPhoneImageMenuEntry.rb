@@ -8,18 +8,20 @@
 # Internal class for AastraIPPhoneImageMenu object.
 ################################################################################
 
-class AastraIPPhoneImageMenuEntry < AastraIPPhone
-  @key
-  @uri
+module AastraXmlApi
+  class AastraIPPhoneImageMenuEntry < AastraIPPhone
+    @key
+    @uri
 
-  # Create a new mapping for a user pressed key and a URI to call.
-  def initialize(key, uri)
-    @key = key
-    @uri = uri
-  end
+    # Create a new mapping for a user pressed key and a URI to call.
+    def initialize(key, uri)
+      @key = key
+      @uri = uri
+    end
 
-  # Create XML text output for this entry.
-  def render
-    return "<URI key=\"#{@key}\">#{escape(@uri)}</URI>\n"
+    # Create XML text output for this entry.
+    def render
+      return "<URI key=\"#{@key}\">#{escape(@uri)}</URI>\n"
+    end
   end
 end

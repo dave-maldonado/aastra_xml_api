@@ -85,101 +85,103 @@ require 'GD'
 #
 ################################################################################
 
-class AastraIPPhoneGDImage
-  @img
-  @white
-  @black
-  @blackNoAntiAliasing
-  @font
-  @fontpath
+module AastraXmlApi
+  class AastraIPPhoneGDImage
+    @img
+    @white
+    @black
+    @blackNoAntiAliasing
+    @font
+    @fontpath
 
-  # Creates a new GD image of size 144x40 (maximum allowed on phone). Also
-  # creates black and white colors to be used and sets default font path
-  # based on whether this is running under rails or a specific
-  # operating system.
-  def initialize
-    # create image
-    @img = GD::Image.new(144, 40)
+    # Creates a new GD image of size 144x40 (maximum allowed on phone). Also
+    # creates black and white colors to be used and sets default font path
+    # based on whether this is running under rails or a specific
+    # operating system.
+    def initialize
+      # create image
+      @img = GD::Image.new(144, 40)
 
-    # define black and white
-    @white = @img.colorAllocate(255, 255, 255)
-    @black = @img.colorAllocate(0, 0, 0)
+      # define black and white
+      @white = @img.colorAllocate(255, 255, 255)
+      @black = @img.colorAllocate(0, 0, 0)
 
-    # black and white only so disable anti-aliasing
-    @black *= -1
-    @white *= -1
+      # black and white only so disable anti-aliasing
+      @black *= -1
+      @white *= -1
 
-    # define a default font path
-    if defined?(RAILS_ROOT) then
-      @fontpath = "#{RAILS_ROOT}/fonts"
-    else
-      os = RUBY_PLATFORM.downcase
-      @fontpath = "C:\\Windows\\Fonts" if not os.scan(/win/).nil?
-      @fontpath = "../fonts" if not os.scan(/linux$/).nil?
-      @fontpath = "../fonts" if not os.scan(/darwin\d+\.\d+$/).nil?
+      # define a default font path
+      if defined?(RAILS_ROOT) then
+        @fontpath = "#{RAILS_ROOT}/fonts"
+      else
+        os = RUBY_PLATFORM.downcase
+        @fontpath = "C:\\Windows\\Fonts" if not os.scan(/win/).nil?
+        @fontpath = "../fonts" if not os.scan(/linux$/).nil?
+        @fontpath = "../fonts" if not os.scan(/darwin\d+\.\d+$/).nil?
+      end
+      ENV['GDFONTPATH'] = @fontpath
     end
-    ENV['GDFONTPATH'] = @fontpath
-  end
 
-  # Set font path for GD.
-  def setFontPath(fontpath)
-    @fontpath = fontpath
-    ENV['GDFONTPATH'] = @fontpath
-  end
-
-  # Draw text on the image using a specific true type font.
-  # See GD documentation for parameters.
-  def drawttftext(size, angle, x, y, text, colorIndex, font)
-    @img.stringTTF(getColor(colorIndex), font, size, angle, x, y, text)
-  end
-
-  # Draw text on the image.
-  def drawtext(size, x, y, text, colorIndex)
-    @img.string(size, x, y, text, getColor(colorIndex))
-  end
-
-  # Set the image from an externally created GD image.
-  def setGDImage(image)
-    @img = image
-  end
-
-  # Get the GD image created.
-  def getGDImage
-    return @img
-  end
-
-  # Draw a rectangle on the image. Rectangle will be unfilled by default.
-  def rectangle(x1, y1, x2, y2, colorIndex, filled=false)
-    if filled then
-      @img.filledRectangle(x1, y1, x2, y2, getColor(colorIndex))
-    else
-      @img.rectangle(x1, y1, x2, y2, getColor(colorIndex))
+    # Set font path for GD.
+    def setFontPath(fontpath)
+      @fontpath = fontpath
+      ENV['GDFONTPATH'] = @fontpath
     end
-  end
 
-  # Draw an ellipse on the image. Ellipse will be unfilled by default.
-  def ellipse(cx, cy, width, height, colorIndex, filled=false)
-    if filled then
-      @img.filledEllipse(cx, cy, width, height, 0, 360, getColor(colorIndex))
-    else
-      @img.ellipse(cx, cy, width, height, 0, 360, getColor(colorIndex))
+    # Draw text on the image using a specific true type font.
+    # See GD documentation for parameters.
+    def drawttftext(size, angle, x, y, text, colorIndex, font)
+      @img.stringTTF(getColor(colorIndex), font, size, angle, x, y, text)
     end
-  end
 
-  # Draw a line on the image.  Line will be solid by default.
-  def line(x1, y1, x2, y2, colorIndex, dashed=false)
-    if dashed then
-      @img.dashedLine(x1, y2, x2, y2, getColor(colorIndex))
-    else
-      @img.line(x1, y2, x2, y2, getColor(colorIndex))
+    # Draw text on the image.
+    def drawtext(size, x, y, text, colorIndex)
+      @img.string(size, x, y, text, getColor(colorIndex))
     end
-  end
 
-  # Get the GD color element based on an index.
-  # 0:: white
-  # 1:: black
-  def getColor(index)
-    return @white if index == 0
-    return @black
+    # Set the image from an externally created GD image.
+    def setGDImage(image)
+      @img = image
+    end
+
+    # Get the GD image created.
+    def getGDImage
+      return @img
+    end
+
+    # Draw a rectangle on the image. Rectangle will be unfilled by default.
+    def rectangle(x1, y1, x2, y2, colorIndex, filled=false)
+      if filled then
+        @img.filledRectangle(x1, y1, x2, y2, getColor(colorIndex))
+      else
+        @img.rectangle(x1, y1, x2, y2, getColor(colorIndex))
+      end
+    end
+
+    # Draw an ellipse on the image. Ellipse will be unfilled by default.
+    def ellipse(cx, cy, width, height, colorIndex, filled=false)
+      if filled then
+        @img.filledEllipse(cx, cy, width, height, 0, 360, getColor(colorIndex))
+      else
+        @img.ellipse(cx, cy, width, height, 0, 360, getColor(colorIndex))
+      end
+    end
+
+    # Draw a line on the image.  Line will be solid by default.
+    def line(x1, y1, x2, y2, colorIndex, dashed=false)
+      if dashed then
+        @img.dashedLine(x1, y2, x2, y2, getColor(colorIndex))
+      else
+        @img.line(x1, y2, x2, y2, getColor(colorIndex))
+      end
+    end
+
+    # Get the GD color element based on an index.
+    # 0:: white
+    # 1:: black
+    def getColor(index)
+      return @white if index == 0
+      return @black
+    end
   end
 end

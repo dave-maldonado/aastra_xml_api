@@ -39,55 +39,57 @@
 #
 ################################################################################
 
-class AastraIPPhoneTextScreen < AastraIPPhone
-  @text
-  @doneAction
-  @allowDTMF
+module AastraXmlApi
+  class AastraIPPhoneTextScreen < AastraIPPhone
+    @text
+    @doneAction
+    @allowDTMF
 
-  # Set the text to be displayed on this screen.
-  def setText(text)
-    @text = text
-  end
-
-  # Set the URI to be called when done viewing this screen.
-  def setDoneAction(uri)
-    @doneAction = uri
-  end
-
-  # When set allows DTMF tones to be sent while viewing this screen.
-  def setAllowDTMF
-    @allowDTMF = "yes"
-  end
-
-  # Create XML text output.
-  def render
-    xml = "<AastraIPPhoneTextScreen"
-    xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
-    xml += " doneAction=\"#{escape(@doneAction)}\"" if not @doneAction.nil?
-    xml += " Beep=\"yes\"" if @beep == "yes"
-    xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    xml += " LockIn=\"yes\"" if @lockin == "yes"
-    xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
-    xml += " allowDTMF=\"yes\"" if @allowDTMF == "yes"
-    xml += ">\n"
-    if not @title.nil? then
-      xml += "<Title"
-      xml += " wrap=\"yes\"" if @title_wrap == "yes"
-      xml += ">#{escape(@title)}</Title>\n"
+    # Set the text to be displayed on this screen.
+    def setText(text)
+      @text = text
     end
-    xml += "<Text>#{escape(@text)}</Text>\n"
-    @softkeys.each { |softkey| xml += softkey.render }
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0 then
-        xml += "<IconList>\n"
-        iconList = 1
+
+    # Set the URI to be called when done viewing this screen.
+    def setDoneAction(uri)
+      @doneAction = uri
+    end
+
+    # When set allows DTMF tones to be sent while viewing this screen.
+    def setAllowDTMF
+      @allowDTMF = "yes"
+    end
+
+    # Create XML text output.
+    def render
+      xml = "<AastraIPPhoneTextScreen"
+      xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
+      xml += " doneAction=\"#{escape(@doneAction)}\"" if not @doneAction.nil?
+      xml += " Beep=\"yes\"" if @beep == "yes"
+      xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      xml += " LockIn=\"yes\"" if @lockin == "yes"
+      xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
+      xml += " allowDTMF=\"yes\"" if @allowDTMF == "yes"
+      xml += ">\n"
+      if not @title.nil? then
+        xml += "<Title"
+        xml += " wrap=\"yes\"" if @title_wrap == "yes"
+        xml += ">#{escape(@title)}</Title>\n"
       end
-      xml += icon.render
+      xml += "<Text>#{escape(@text)}</Text>\n"
+      @softkeys.each { |softkey| xml += softkey.render }
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0 then
+          xml += "<IconList>\n"
+          iconList = 1
+        end
+        xml += icon.render
+      end
+      xml += "</IconList>\n" if iconList != 0
+      xml += "</AastraIPPhoneTextScreen>\n"
+      return xml
     end
-    xml += "</IconList>\n" if iconList != 0
-    xml += "</AastraIPPhoneTextScreen>\n"
-    return xml
   end
-  end
+end

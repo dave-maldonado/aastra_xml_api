@@ -24,35 +24,37 @@
 #
 ################################################################################
 
-class AastraIPPhoneExecute < AastraIPPhone
-  @defaultIndex
-  @triggerDestroyOnExit
+module AastraXmlApi
+  class AastraIPPhoneExecute < AastraIPPhone
+    @defaultIndex
+    @triggerDestroyOnExit
 
-  # Add a url (action to be performed).  If interruptCall is not nil, then
-  # then if a dial action is given, the current call will be put on hold.
-  # Default behavior is to not allow a current active call to be
-  # interrupted.
-  def addEntry(url, interruptCall=nil)
-    @entries += [AastraIPPhoneExecuteEntry.new(url, interruptCall)]
-  end
-
-  # When set, the previous user interface XML object is destroyed
-  # if its destroyOnExit tag is also set to yes.
-  def setTriggerDestroyOnExit
-    @triggerDestroyOnExit = "yes"
-  end
-
-  # Create XML text output.
-  def render
-    title = escape(@title)
-    out = "<AastraIPPhoneExecute"
-    out += " Beep=\"yes\"" if @beep == "yes"
-    out += " triggerDestroyOnExit=\"yes\"" if @triggerDestroyOnExit == "yes"
-    out += ">\n"
-    @entries.each do |entry|
-      out += entry.render
+    # Add a url (action to be performed).  If interruptCall is not nil, then
+    # then if a dial action is given, the current call will be put on hold.
+    # Default behavior is to not allow a current active call to be
+    # interrupted.
+    def addEntry(url, interruptCall=nil)
+      @entries += [AastraIPPhoneExecuteEntry.new(url, interruptCall)]
     end
-    out += "</AastraIPPhoneExecute>\n"
-    return out
+
+    # When set, the previous user interface XML object is destroyed
+    # if its destroyOnExit tag is also set to yes.
+    def setTriggerDestroyOnExit
+      @triggerDestroyOnExit = "yes"
+    end
+
+    # Create XML text output.
+    def render
+      title = escape(@title)
+      out = "<AastraIPPhoneExecute"
+      out += " Beep=\"yes\"" if @beep == "yes"
+      out += " triggerDestroyOnExit=\"yes\"" if @triggerDestroyOnExit == "yes"
+      out += ">\n"
+      @entries.each do |entry|
+        out += entry.render
+      end
+      out += "</AastraIPPhoneExecute>\n"
+      return out
+    end
   end
-  end
+end

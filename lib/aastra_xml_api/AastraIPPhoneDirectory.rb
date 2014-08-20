@@ -41,79 +41,80 @@
 #     aastra_output directory
 #
 ################################################################################
+module AastraXmlApi
+  class AastraIPPhoneDirectory < AastraIPPhone
+    @next
+    @previous
 
-class AastraIPPhoneDirectory < AastraIPPhone
-  @next
-  @previous
+    # Set the URI to load the next page of the directory.
+    def setNext(nextval)
+      @next = nextval
+    end
 
-  # Set the URI to load the next page of the directory.
-  def setNext(nextval)
-    @next = nextval
-  end
+    # Set the URI to load the previous page of the directory.
+    def setPrevious(previous)
+      @previous = previous
+    end
 
-  # Set the URI to load the previous page of the directory.
-  def setPrevious(previous)
-    @previous = previous
-  end
+    # Add directory entry with a name to be displayed and a telephone
+    # number to dial.
+    def addEntry(name, telephone)
+      @entries += [AastraIPPhoneDirectoryEntry.new(name, telephone)]
+    end
 
-  # Add directory entry with a name to be displayed and a telephone
-  # number to dial.
-  def addEntry(name, telephone)
-    @entries += [AastraIPPhoneDirectoryEntry.new(name, telephone)]
-  end
+    # Sort array of names using natural sort order. i.e. Bob2 comes
+    # before Bob10.
+    def natsortByName
+      tmparray = []
+      linklist = {}
+      for i in 0..@entries.size-1
+        tmparray += [@entries[i].getName]
+        linklist[@entries[i].getName] = i
+      end
+      tmparray.natsort!
+      newentries = []
+      tmparray.each do |name|
+        newentries += [@entries[linklist[name]]]
+      end
+      @entries = newentries
+    end
 
-  # Sort array of names using natural sort order. i.e. Bob2 comes
-  # before Bob10.
-  def natsortByName
-    tmparray = []
-    linklist = {}
-    for i in 0..@entries.size-1
-      tmparray += [@entries[i].getName]
-      linklist[@entries[i].getName] = i
+    # Create XML text output.
+    def render
+      out = "<AastraIPPhoneDirectory"
+      if not @previous.nil? then
+        previous = escape(@previous)
+        out += " previous=\"#{previous}\""
+      end
+      if not @next.nil? then
+        nextval = escape(@next)
+        out += " next=\"#{nextval}\""
+      end
+      out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      if not @cancelAction.nil? then
+        cancelAction = escape(@cancelAction)
+        out += " cancelAction=\"#{cancelAction}\""
+      end
+      out += " Beep=\"yes\"" if @beep == "yes"
+      out += " LockIn=\"yes\"" if @lockin == "yes"
+      out += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      out += ">\n"
+      if not @title.nil? then
+        title = escape(title)
+        out += "<Title"
+        out += " wrap=\"yes\"" if @title_wrap == "yes"
+        out += ">#{title}</Title>\n"
+      end
+      index = 0
+      @entries.each do |entry|
+        out += entry.render if index < 30
+        index += 1
+      end
+      @softkeys.each do |softkey|
+        out += softkey.render
+      end
+      out += "</AastraIPPhoneDirectory>\n"
+      return out
     end
-    tmparray.natsort!
-    newentries = []
-    tmparray.each do |name|
-      newentries += [@entries[linklist[name]]]
-    end
-    @entries = newentries
-  end
-
-  # Create XML text output.
-  def render
-    out = "<AastraIPPhoneDirectory"
-    if not @previous.nil? then
-      previous = escape(@previous)
-      out += " previous=\"#{previous}\""
-    end
-    if not @next.nil? then
-      nextval = escape(@next)
-      out += " next=\"#{nextval}\""
-    end
-    out += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    if not @cancelAction.nil? then
-      cancelAction = escape(@cancelAction)
-      out += " cancelAction=\"#{cancelAction}\""
-    end
-    out += " Beep=\"yes\"" if @beep == "yes"
-    out += " LockIn=\"yes\"" if @lockin == "yes"
-    out += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    out += ">\n"
-    if not @title.nil? then
-      title = escape(title)
-      out += "<Title"
-      out += " wrap=\"yes\"" if @title_wrap == "yes"
-      out += ">#{title}</Title>\n"
-    end
-    index = 0
-    @entries.each do |entry|
-      out += entry.render if index < 30
-      index += 1
-    end
-    @softkeys.each do |softkey|
-      out += softkey.render
-    end
-    out += "</AastraIPPhoneDirectory>\n"
-    return out
   end
 end

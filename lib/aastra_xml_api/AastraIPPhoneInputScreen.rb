@@ -85,165 +85,167 @@
 #
 ################################################################################
 
-class AastraIPPhoneInputScreen < AastraIPPhone
-  @url
-  @type
-  @parameter
-  @prompt
-  @editable
-  @default
-  @password
-  @defaultindex
-  @displaymode
-  @inputlanguage
+module AastraXmlApi
+  class AastraIPPhoneInputScreen < AastraIPPhone
+    @url
+    @type
+    @parameter
+    @prompt
+    @editable
+    @default
+    @password
+    @defaultindex
+    @displaymode
+    @inputlanguage
 
-  # Set URL to be called (html post) when the input is submitted.
-  def setURL(url)
-    @url = url
-  end
-
-  # Sets the type of all fields (see addField for values) unless overriden
-  # by setFieldType.
-  def setType(type)
-    @type = type
-  end
-
-  # Sets all fields are editable. Kept only for compatibility.
-  def setEditable
-    @editable = "yes"
-  end
-
-  # Sets all fields as read only if not overriden by setFieldEditable.
-  def setNotEditable
-    @editable = "no"
-  end
-
-  # Set default value for all fields if not overriden by setFieldDefault.
-  def setDefault(default)
-    @default = default
-  end
-
-  # Set parameter name for all fields if not overriden by setFieldParameter.
-  def setParameter(parameter)
-    @parameter = parameter
-  end
-
-  # Set password input for all fields, masked by "*" characters if not
-  # overriden by setFieldPassword.
-  def setPassword
-    @password = "yes"
-  end
-
-  # Prompt for all input fields, if not overriden by setFieldPrompt.
-  def setPrompt(prompt)
-    @prompt = prompt
-  end
-
-  # Defines which field 1 (default) through 6 the user will start input on.
-  def setDefaultIndex(index)
-    @defaultindex = index
-  end
-
-  # Can be one of normal (default) or condensed.
-  def setDisplayMode(display)
-    @displaymode = display
-  end
-
-  # Defines the language character set used for input.
-  def setInputLanguage(input)
-    @inputlanguage = input
-  end
-
-  # Add a new field to get input for.  The type can be one of IP,
-  # string (default), number, timeUS, timeInt, dateUS, or dateInt.
-  def addField(type=nil)
-    @entries += [AastraIPPhoneInputScreenEntry.new(type)]
-  end
-
-  # Sets the type (see addField for values) of the most recently added
-  # field.
-  def setFieldType(type)
-    @entries[@entries.size-1].setType(type)
-  end
-
-  # Set the most recently added field as a password field and mask input
-  # by "*" characters.
-  def setFieldPassword
-    @entries[@entries.size-1].setPassword
-  end
-
-  # Set the most recently added field as editable.  This is the default.
-  def setFieldEditable
-    @entries[@entries.size-1].setEditable
-  end
-
-  # Set the most recently added field's parameter name in the form post
-  # when submitted.
-  def setFieldParameter(parameter)
-    @entries[@entries.size-1].setParameter(parameter)
-  end
-
-  # Set the most recently added field's prompt text.
-  def setFieldPrompt(prompt)
-    @entries[@entries.size-1].setPrompt(prompt)
-  end
-
-  # Set the most recently added field's default value.This is what is
-  # displayed when first shown.
-  def setFieldDefault(default)
-    @entries[@entries.size-1].setDefault(default)
-  end
-
-  # Sets the most recently added field's selection tag which is added
-  # to the request when the submit button is pressed while editing this
-  # field.
-  def setFieldSelection(selection)
-    @entries[@entries.size-1].setSelection(selection)
-  end
-
-  # Adds a softkey to be displayed when the most recently added field
-  # is highlighted.
-  def addFieldSoftkey(index, label, uri, icon=nil)
-    @entries[@entries.size-1].addSoftkey(index, label, uri, icon)
-  end
-
-  # Create XML text output.
-  def render
-    @type = 'string' if @type.nil?
-    xml = "<AastraIPPhoneInputScreen type=\"#{@type}\""
-    xml += " password=\"yes\"" if @password == "yes"
-    xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
-    xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
-    xml += " editable=\"no\"" if @editable == "no"
-    xml += " Beep=\"yes\"" if @beep == "yes"
-    xml += " defaultIndex=\"#{@defaultindex}\"" if not @defaultindex.nil?
-    xml += " inputLanguage=\"#{@inputlanguage}\"" if not @inputlanguage.nil?
-    xml += " displayMode=\"#{@displaymode}\"" if not @displaymode.nil?
-    xml += " LockIn=\"yes\"" if @lockin == "yes"
-    xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
-    xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
-    xml += ">\n"
-    if not @title.nil? then
-      xml += "<Title"
-      out += " wrap=\"yes\"" if @title_wrap == "yes"
-      xml += ">#{escape(@title)}</Title>\n"
+    # Set URL to be called (html post) when the input is submitted.
+    def setURL(url)
+      @url = url
     end
-    xml += "<Prompt>#{escape(@prompt)}</Prompt>\n" if not @prompt.nil?
-    xml += "<URL>#{escape(@url)}</URL>\n"
-    xml += "<Parameter>#{@parameter}</Parameter>\n" if not @parameter.nil?
-    xml += "<Default>#{@default}</Default>\n"
-    @entries.each { |entry| xml += entry.render }
-    @softkeys.each { |softkey| xml += softkey.render }
-    iconList = 0
-    @icons.each do |icon|
-      if iconList == 0 then
-        xml += "<IconList>\n"
-        iconList = 1
+
+    # Sets the type of all fields (see addField for values) unless overriden
+    # by setFieldType.
+    def setType(type)
+      @type = type
+    end
+
+    # Sets all fields are editable. Kept only for compatibility.
+    def setEditable
+      @editable = "yes"
+    end
+
+    # Sets all fields as read only if not overriden by setFieldEditable.
+    def setNotEditable
+      @editable = "no"
+    end
+
+    # Set default value for all fields if not overriden by setFieldDefault.
+    def setDefault(default)
+      @default = default
+    end
+
+    # Set parameter name for all fields if not overriden by setFieldParameter.
+    def setParameter(parameter)
+      @parameter = parameter
+    end
+
+    # Set password input for all fields, masked by "*" characters if not
+    # overriden by setFieldPassword.
+    def setPassword
+      @password = "yes"
+    end
+
+    # Prompt for all input fields, if not overriden by setFieldPrompt.
+    def setPrompt(prompt)
+      @prompt = prompt
+    end
+
+    # Defines which field 1 (default) through 6 the user will start input on.
+    def setDefaultIndex(index)
+      @defaultindex = index
+    end
+
+    # Can be one of normal (default) or condensed.
+    def setDisplayMode(display)
+      @displaymode = display
+    end
+
+    # Defines the language character set used for input.
+    def setInputLanguage(input)
+      @inputlanguage = input
+    end
+
+    # Add a new field to get input for.  The type can be one of IP,
+    # string (default), number, timeUS, timeInt, dateUS, or dateInt.
+    def addField(type=nil)
+      @entries += [AastraIPPhoneInputScreenEntry.new(type)]
+    end
+
+    # Sets the type (see addField for values) of the most recently added
+    # field.
+    def setFieldType(type)
+      @entries[@entries.size-1].setType(type)
+    end
+
+    # Set the most recently added field as a password field and mask input
+    # by "*" characters.
+    def setFieldPassword
+      @entries[@entries.size-1].setPassword
+    end
+
+    # Set the most recently added field as editable.  This is the default.
+    def setFieldEditable
+      @entries[@entries.size-1].setEditable
+    end
+
+    # Set the most recently added field's parameter name in the form post
+    # when submitted.
+    def setFieldParameter(parameter)
+      @entries[@entries.size-1].setParameter(parameter)
+    end
+
+    # Set the most recently added field's prompt text.
+    def setFieldPrompt(prompt)
+      @entries[@entries.size-1].setPrompt(prompt)
+    end
+
+    # Set the most recently added field's default value.This is what is
+    # displayed when first shown.
+    def setFieldDefault(default)
+      @entries[@entries.size-1].setDefault(default)
+    end
+
+    # Sets the most recently added field's selection tag which is added
+    # to the request when the submit button is pressed while editing this
+    # field.
+    def setFieldSelection(selection)
+      @entries[@entries.size-1].setSelection(selection)
+    end
+
+    # Adds a softkey to be displayed when the most recently added field
+    # is highlighted.
+    def addFieldSoftkey(index, label, uri, icon=nil)
+      @entries[@entries.size-1].addSoftkey(index, label, uri, icon)
+    end
+
+    # Create XML text output.
+    def render
+      @type = 'string' if @type.nil?
+      xml = "<AastraIPPhoneInputScreen type=\"#{@type}\""
+      xml += " password=\"yes\"" if @password == "yes"
+      xml += " destroyOnExit=\"yes\"" if @destroyOnExit == "yes"
+      xml += " cancelAction=\"#{escape(@cancelAction)}\"" if not @cancelAction.nil?
+      xml += " editable=\"no\"" if @editable == "no"
+      xml += " Beep=\"yes\"" if @beep == "yes"
+      xml += " defaultIndex=\"#{@defaultindex}\"" if not @defaultindex.nil?
+      xml += " inputLanguage=\"#{@inputlanguage}\"" if not @inputlanguage.nil?
+      xml += " displayMode=\"#{@displaymode}\"" if not @displaymode.nil?
+      xml += " LockIn=\"yes\"" if @lockin == "yes"
+      xml += " allowAnswer=\"yes\"" if @allowAnswer == "yes"
+      xml += " Timeout=\"#{@timeout}\"" if @timeout != 0
+      xml += ">\n"
+      if not @title.nil? then
+        xml += "<Title"
+        out += " wrap=\"yes\"" if @title_wrap == "yes"
+        xml += ">#{escape(@title)}</Title>\n"
       end
-      xml += icon.render
+      xml += "<Prompt>#{escape(@prompt)}</Prompt>\n" if not @prompt.nil?
+      xml += "<URL>#{escape(@url)}</URL>\n"
+      xml += "<Parameter>#{@parameter}</Parameter>\n" if not @parameter.nil?
+      xml += "<Default>#{@default}</Default>\n"
+      @entries.each { |entry| xml += entry.render }
+      @softkeys.each { |softkey| xml += softkey.render }
+      iconList = 0
+      @icons.each do |icon|
+        if iconList == 0 then
+          xml += "<IconList>\n"
+          iconList = 1
+        end
+        xml += icon.render
+      end
+      xml += "</IconList>\n" if iconList != 0
+      xml += "</AastraIPPhoneInputScreen>\n"
+      return xml
     end
-    xml += "</IconList>\n" if iconList != 0
-    xml += "</AastraIPPhoneInputScreen>\n"
-    return xml
   end
-  end
+end
